@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase 
+      MYSQL_USER: myuser 
+      MYSQL_PASSWORD: mypassword
+    ports:
+     - "3306:3306"
+
+  web:
+    image: comment_app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app 
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db 
+    environment:
+      - MYSQL_HOST=db 
+      - MYSQL_PORT=3306 
+      - MYSQL_USER=myuser 
+      - MYSQL_PASSWORD=mypassword 
+      - MYSQL_DB=mydatabase
+
+volumes:
+  mysql_data:    
